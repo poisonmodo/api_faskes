@@ -6,6 +6,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\VaksinController;
 use App\Http\Controllers\FaskesController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,12 +30,14 @@ Route::group([
     //'middleware' => ['auth:api']
   ], function () {
 
+    Route::post('login', [UserController::class,'login']);
+
     //Users
-    Route::post('users', [UserController::class,'create']);
-    Route::put('users/{id}', [UserController::class,'edit']);
-    Route::delete('users/{id}', [UserController::class,'delete']);
-    Route::get('users', [UserController::class,'get_users']);
-    Route::get('users/{id}', [UserController::class,'get_user_detail']);
+    Route::post('master/user', [UserController::class,'create']);
+    Route::put('master/user/{id}', [UserController::class,'edit']);
+    Route::delete('master/user/{id}', [UserController::class,'delete']);
+    Route::get('master/user', [UserController::class,'get_users']);
+    Route::get('master/user/{id}', [UserController::class,'get_user_detail']);
 
     //City
     Route::post('master/city', [CityController::class,'create']);

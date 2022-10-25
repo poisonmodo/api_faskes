@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     //
+
+
     public function create(Request $request)
     {
         //
         $dat = $request->all();
          $validator = Validator::make($request->all(), [
-            'email'     => 'required|valid_email',
+            'email'     => 'required|email|unique:users,email',
             'password'  => 'required|string'
         ]);
 
@@ -26,8 +30,8 @@ class UserController extends Controller
         } 
         
         $usr = new User;
-        $usr->email=$dat["email"];
-        $usr->password=Hash::make('password');
+        $usr->email=$usr->name=$dat["email"];
+        $usr->password=Hash::make($dat["password"]);
         $usr->save();
        
         return response()->json([
@@ -39,7 +43,7 @@ class UserController extends Controller
     public function edit(Request $request,$id) {
         $dat = $request->all();
          $validator = Validator::make($request->all(), [
-            'email'     => 'required|valid_email',
+            'email'     => 'required|email|unique:users,id,'.$id,
             'password'  => 'required|string'            
         ]);
 
@@ -48,11 +52,11 @@ class UserController extends Controller
                 "statuscode" => 422,
                 "message" => $validator->errors()
             ],422);
-        } 
+        }   
         
         $usr = User::find($id);
-        $usr->email=$dat["email"];
-        $usr->password=Hash::make('password');
+        $usr->email=$usr->name=$dat["email"];
+        $usr->password=Hash::make($dat["password"]);
         $usr->save();
        
         return response()->json([
@@ -118,5 +122,37 @@ class UserController extends Controller
             ],404);
         }    
     }
+
+    public function login(Request $request) {
+        $dat    = $request->all();
+        //DB::enableQueryLog();
+        $validator = Validator::make($request->all(), [
+            'email'     => 'required|email',
+            'password'  => 'required|string'            
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $validator->errors()
+            ],422);
+        }
+        
+        $usr    = User::where('email',$dat["email"])
+                   ->first();
+        if( Hash::check( $dat["password"] , $usr->password ) ) {
+            return response()->json([
+                "statuscode" => 200,
+                "message" => "Login Valid",
+                "data" =>$usr
+            ],200);
+        }
+        else {
+            return response()->json([
+                "statuscode" => 401,
+                "message" => "Alamat Email atau password Salah"
+            ],401);
+        }    
+    }
+
 }
-    
