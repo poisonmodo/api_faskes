@@ -11,4 +11,7 @@ class Provinces extends Model
     protected $table = 'provinces';
     public $timestamps = false;
 
+    public function faskes(){
+        return $this->hasOne('App\Models\Faskes', 'province_id', 'id');
+    }
 }
