@@ -123,6 +123,16 @@ class UserController extends Controller
         }    
     }
 
+    public function logout (Request $request) {
+        // print_r($request->user());
+        // exit();
+        $token = $request->user()->token();
+        $token->revoke();
+        $response = ['message' => 'You have been successfully logged out!'];
+        return response($response, 200);
+    }
+    
+    
     public function login(Request $request) {
         $dat    = $request->all();
         //DB::enableQueryLog();
@@ -140,17 +150,27 @@ class UserController extends Controller
         
         $usr    = User::where('email',$dat["email"])
                    ->first();
-        if( Hash::check( $dat["password"] , $usr->password ) ) {
-            return response()->json([
-                "statuscode" => 200,
-                "message" => "Login Valid",
-                "data" =>$usr
-            ],200);
+        if($usr) {
+            if (Hash::check($dat["password"] , $usr->password)) {
+                $token = $usr->createToken('Laravel Password Grant Client')->accessToken;
+                $response = ['token' => $token];
+                return response()->json([
+                    "statuscode" => 200,
+                    "message" => "Login Valid",
+                    "data" =>$usr,
+                    "token" => $token
+                ],200);
+            } else {
+                $response = ["message" => "Password mismatch"];
+                return response($response, 422);
+            }
+    
+            
         }
         else {
             return response()->json([
                 "statuscode" => 401,
-                "message" => "Alamat Email atau password Salah"
+                "message" => "Alamat Email Tidak ditemukan"
             ],401);
         }    
     }

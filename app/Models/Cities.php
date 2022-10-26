@@ -11,5 +11,8 @@ class Cities extends Model
     protected $primaryKey = 'id';
     protected $table = 'cities';
     public $timestamps = false;
-    
+ 
+    public function faskes(){
+        return $this->hasOne('App\Models\Faskes', 'city_id', 'id');
+    }
 }

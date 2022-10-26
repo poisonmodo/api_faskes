@@ -10,4 +10,8 @@ class Vaksins extends Model
     protected $primaryKey = 'id';
     protected $table = 'vaksin';
     public $timestamps = false;
+
+    public function vaksinfaskeslist(){
+        return $this->hasMany('App\Models\FaskesVaksins', 'vaksin_id', 'id');
+    }
 }

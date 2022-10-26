@@ -16,6 +16,7 @@ class Vaksin extends Migration
         //
         Schema::create('vaksin', function (Blueprint $table) {
             $table->id();
+            $table->integer('vaksin_type')->default(0);
             $table->string('vaksin_name')->nullable();
         });
     }

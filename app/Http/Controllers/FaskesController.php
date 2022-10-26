@@ -3,12 +3,137 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\FaskesVaksin;
 use App\Models\Faskes;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+
 
 class FaskesController extends Controller
 {
+    public function get_faskesvaksin_detail(Request $request,$id) {
+        $dat = $request->all();
+        $FkesVaksin = FaskesVaksin::with('faskeslist')->with('vaksinlist')->where('id',$id)->get();
+        if(!empty($FkesVaksin)) {
+            return response()->json([
+                "statuscode" => 200,
+                "message" => "Vaksin ditemukan",
+                "data" =>$FkesVaksin
+            ],200);
+        }
+        else {
+            return response()->json([
+                "success" => false,
+                "message" => "Vaksin tidak ditemukan"
+            ],404);
+        }    
+    }
+
+    public function delete_faskes_vaksin(Request $request,$id) {
+        $dat = $request->all();
+        //  $validator = Validator::make($request->all(), [
+        //     'id' => 'required',
+        // ]);
+
+        if(!$id) {
+            return response()->json([
+                "success" => false,
+                "message" => "Silakan masukkan id"
+            ],422);
+        } 
+        
+        $FkesVaksin = FaskesVaksin::find($id);
+        $FkesVaksin->delete();
+       
+        return response()->json([
+            "statuscode" => 200,
+            "message" => "Vaksin berhasil dihapus"
+        ],200);
+    }
+
+    public function edit_faskes_vaksin(Request $request,$id) {
+        $dat = $request->all();
+         $validator = Validator::make($request->all(), [
+            'faskes_id'       => 'required|integer',
+            'vaksin_id'       => 'required|integer',
+            'kouta'           => 'required|integer',
+                        
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $validator->errors()
+            ],422);
+        } 
+        
+        $FkesVaksin = FaskesVaksin::find($id);
+        $FkesVaksin->faskes_id=$dat["faskes_id"];
+        $FkesVaksin->vaksin_id=$dat["vaksin_id"];
+        $FkesVaksin->kouta=$dat["kouta"];
+        // $FkesVaksin->updated_at=date("Y-m-d H:i:s");
+        $FkesVaksin->save();
+       
+        return response()->json([   
+            "statuscode" => 200,
+            "message" => "Vaksin berhasil diupdate"
+        ],200);
+    }
+
+
     //
+    public function add_faskes_vaksin(Request $request)
+    {
+        //
+        $dat = $request->all();
+        $faskes_id = $dat['faskes_id']; 
+        $validator = Validator::make($dat, [
+            'faskes_id'       => 'required|integer',
+            'vaksin_id'       => 'required|integer|exists:faskes_vaksins,faskes_id',
+            'kouta'           => 'required|integer',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $validator->errors()
+            ],422);
+        } 
+        
+        $FkesVaksin = new FaskesVaksin;
+        $FkesVaksin->faskes_id=$dat["faskes_id"];
+        $FkesVaksin->vaksin_id=$dat["vaksin_id"];
+        $FkesVaksin->kouta=$dat["kouta"];
+        // $FkesVaksin->created_at=date("Y-m-d H:i:s");
+        // $FkesVaksin->updated_at=date("Y-m-d H:i:s");
+        $FkesVaksin->save();
+       
+        return response()->json([
+            "statuscode" => 200,
+            "message" => "Vaksin berhasil ditambahkan"
+        ],200);
+    }
+
+    public function get_faskes_vaksin(Request $request) {
+        $FkesVaksin = FaskesVaksin::with("faskeslist")->with("vaksinlist")->get();
+        // dd($FkesVaksin);
+        // exit();
+        if(!$FkesVaksin->isEmpty()) {
+            return response()->json([
+                "statuscode" => 200,
+                "message" => "Data Ditemukan",
+                "data" => $FkesVaksin 
+            ],200);
+        }
+        else {
+            return response()->json([
+                "statuscode" => 404,
+                "message" => "Vaksin tidak ditemukan"
+            ],404);
+        }    
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -107,7 +232,7 @@ class FaskesController extends Controller
             return response()->json([
                 "statuscode" => 200,
                 "message" => "Data Ditemukan",
-                "data" => $City 
+                "data" => $Fkes 
             ],200);
         }
         else {

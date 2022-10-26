@@ -20,6 +20,7 @@ class Faskes extends Migration
             $table->string('faskes_name',150)->nullable();
             $table->text('faskes_address')->nullable();
             $table->string('faskes_phone',30)->unique()->nullable();
+            $table->integer('province_id')->default(0);
             $table->integer('city_id')->default(0);
         });    
     }

@@ -31,6 +31,7 @@ Route::group([
   ], function () {
 
     Route::post('login', [UserController::class,'login']);
+    Route::post('logout', [UserController::class,'logout']);
 
     //Users
     Route::post('master/user', [UserController::class,'create']);
@@ -54,11 +55,18 @@ Route::group([
     Route::get('master/province/{id}', [ProvinceController::class,'get_province_detail']);
 
     //Vaksin
-    Route::post('faskes/vaksin', [VaksinController::class,'create']);
-    Route::put('faskes/vaksin/{id}', [VaksinController::class,'edit']);
-    Route::delete('faskes/vaksin/{id}', [VaksinController::class,'delete']);
-    Route::get('faskes/vaksin', [VaksinController::class,'get_vaksins']);
-    Route::get('faskes/vaksin/{id}', [VaksinController::class,'get_vaksin_detail']);
+    Route::post('master/vaksin', [VaksinController::class,'create']);
+    Route::put('master/vaksin/{id}', [VaksinController::class,'edit']);
+    Route::delete('master/vaksin/{id}', [VaksinController::class,'delete']);
+    Route::get('master/vaksin', [VaksinController::class,'get_vaksins']);
+    Route::get('master/vaksin/{id}', [VaksinController::class,'get_vaksin_detail']);
+
+    //Faskes_vaksin
+    Route::get('faskes/vaksin', [FaskesController::class,'get_faskes_vaksin']);
+    Route::post('faskes/vaksin', [FaskesController::class,'add_faskes_vaksin']);
+    Route::put('faskes/vaksin/{id}', [FaskesController::class,'edit_faskes_vaksin']);
+    Route::delete('faskes/vaksin/{id}', [FaskesController::class,'delete_faskes_vaksin']);
+    Route::get('faskes/vaksin/{id}', [FaskesController::class,'get_faskesvaksin_detail']);
 
     //Faskes
     Route::post('faskes', [FaskesController::class,'create']);
@@ -66,5 +74,11 @@ Route::group([
     Route::delete('faskes/{id}', [FaskesController::class,'delete']);
     Route::get('faskes', [FaskesController::class,'get_faskes']);
     Route::get('faskes/{id}', [FaskesController::class,'get_faskes_detail']);
+
+    //Report
+    Route::post('report', [ReportController::class,'get_faskes_vaksin']);    
+
+
+
 });
     
