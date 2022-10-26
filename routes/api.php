@@ -7,6 +7,7 @@ use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\VaksinController;
 use App\Http\Controllers\FaskesController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
